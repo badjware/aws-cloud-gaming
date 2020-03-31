@@ -7,7 +7,3 @@ variable "aws_instance_type" {
   description = "The aws instance type"
   default = "t2.micro"
 }
-
-variable "admin_password" {
-  description = "The Windows administrator password"
-}
