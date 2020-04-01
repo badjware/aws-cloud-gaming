@@ -1,9 +1,28 @@
-variable "aws_region" {
+variable "region" {
   description = "The aws region. Choose the one closest to you: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions"
-  default="us-east-1"
+  type = string
 }
 
-variable "aws_instance_type" {
+variable "allowed_availability_zone_identifier" {
+  description = "The allowed availability zone identify (the letter suffixing the regoin). Choose ones that allows you to request the desired instance as spot instance in your region."
+  type = list
+  default = ["a", "b"]
+}
+
+variable "instance_type" {
   description = "The aws instance type, Choose one with a GPU that fits your need: https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing"
-  default = "t2.micro"
+  type = string
+  default = "g4dn.xlarge"
+}
+
+variable "root_block_device_size_gb" {
+  description = "The size of the root block device (C:\\ drive) attached to the instance"
+  type = number
+  default = 80
+}
+
+variable "custom_ami" {
+  description = "Use the specified ami instead of the most recent windows ami in available in the region"
+  type = string
+  default = ""
 }

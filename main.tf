@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.aws_region
+  region = var.region
 }
 
 data "aws_ami" "windows_ami" {
@@ -15,6 +15,15 @@ data "aws_ami" "windows_ami" {
 data "external" "local_ip" {
   # curl should (hopefully) be available everywhere
   program = ["curl", "https://v4.ident.me/.json"]
+}
+
+locals {
+  availability_zone = "${var.region}${element(var.allowed_availability_zone_identifier, random_integer.az_id.result)}"
+}
+
+resource  "random_integer" "az_id" {
+  min = 0
+  max = length(var.allowed_availability_zone_identifier)
 }
 
 resource "random_password" "password" {
@@ -122,12 +131,23 @@ resource "aws_iam_instance_profile" "windows_instance_profile" {
   role = aws_iam_role.windows_instance_role.name
 }
 
-resource "aws_instance" "windows_instance" {
-  instance_type = var.aws_instance_type
-  ami = data.aws_ami.windows_ami.image_id
+resource "aws_spot_instance_request" "windows_instance" {
+  instance_type = var.instance_type
+  availability_zone = local.availability_zone
+  ami = (length(var.custom_ami) > 0) ? var.custom_ami : data.aws_ami.windows_ami.image_id
   security_groups = [aws_security_group.default.name]
   user_data = templatefile("${path.module}/user_data.tpl", { password_ssm_parameter= aws_ssm_parameter.password.name })
   iam_instance_profile = aws_iam_instance_profile.windows_instance_profile.id
+  ebs_optimized = true
+
+  # Spot configuration
+  spot_type = "one-time"
+  wait_for_fulfillment = true
+
+  # EBS configuration
+  root_block_device {
+    volume_size = var.root_block_device_size_gb
+  }
 
   tags = {
     Name = "cloud-gaming-instance"
