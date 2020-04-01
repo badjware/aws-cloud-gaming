@@ -8,11 +8,12 @@ data "aws_ami" "windows_ami" {
 
   filter {
     name = "name"
-    values = ["Windows_Server-2016-English-Full-Base-*"]
+    values = ["Windows_Server-2019-English-Full-Base-*"]
   }
 }
 
 data "external" "local_ip" {
+  # curl should (hopefully) be available everywhere
   program = ["curl", "https://v4.ident.me/.json"]
 }
 
@@ -42,7 +43,7 @@ resource "aws_security_group" "default" {
 # Allow rdp connections from the local ip
 resource "aws_security_group_rule" "rdp_ingress" {
   type = "ingress"
-  description = "Enable rdp connections via 3389"
+  description = "Allow rdp connections (port 3389)"
   from_port = 3389
   to_port = 3389
   protocol = "tcp"
@@ -50,8 +51,20 @@ resource "aws_security_group_rule" "rdp_ingress" {
   security_group_id = aws_security_group.default.id
 }
 
+# Allow vnc connections from the local ip
+resource "aws_security_group_rule" "vnc_ingress" {
+  type = "ingress"
+  description = "Allow vnc connections (port 5900)"
+  from_port = 5900
+  to_port = 5900
+  protocol = "tcp"
+  cidr_blocks = ["${data.external.local_ip.result.address}/32"]
+  security_group_id = aws_security_group.default.id
+}
+
+
 # Allow outbound connection to everywhere
-resource "aws_security_group_rule" "default_egress" {
+resource "aws_security_group_rule" "default" {
   type = "egress"
   from_port = 0
   to_port = 0
@@ -113,7 +126,7 @@ resource "aws_instance" "windows_instance" {
   instance_type = var.aws_instance_type
   ami = data.aws_ami.windows_ami.image_id
   security_groups = [aws_security_group.default.name]
-  user_data = templatefile("${path.module}/user_data.tpl", { password_parameter_name = aws_ssm_parameter.password.name })
+  user_data = templatefile("${path.module}/user_data.tpl", { password_ssm_parameter= aws_ssm_parameter.password.name })
   iam_instance_profile = aws_iam_instance_profile.windows_instance_profile.id
 
   tags = {
