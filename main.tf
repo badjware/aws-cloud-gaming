@@ -159,15 +159,15 @@ resource "aws_spot_instance_request" "windows_instance" {
   availability_zone = local.availability_zone
   ami = (length(var.custom_ami) > 0) ? var.custom_ami : data.aws_ami.windows_ami.image_id
   security_groups = [aws_security_group.default.name]
-  user_data = templatefile("${path.module}/templates/user_data.tpl", { password_ssm_parameter= aws_ssm_parameter.password.name })
+  user_data = templatefile("${path.module}/templates/user_data.tpl", { password_ssm_parameter=aws_ssm_parameter.password.name })
   iam_instance_profile = aws_iam_instance_profile.windows_instance_profile.id
-  ebs_optimized = true
 
   # Spot configuration
   spot_type = "one-time"
   wait_for_fulfillment = true
 
   # EBS configuration
+  ebs_optimized = true
   root_block_device {
     volume_size = var.root_block_device_size_gb
   }
@@ -176,6 +176,10 @@ resource "aws_spot_instance_request" "windows_instance" {
     Name = "cloud-gaming-instance"
     App = "aws-cloud-gaming"
   }
+}
+
+output "instance_id" {
+  value = aws_spot_instance_request.windows_instance.id
 }
 
 output "instance_ip" {

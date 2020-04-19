@@ -10,7 +10,7 @@ variable "allowed_availability_zone_identifier" {
 }
 
 variable "instance_type" {
-  description = "The aws instance type, Choose one with a GPU that fits your need: https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing"
+  description = "The aws instance type, Choose one with a CPU/GPU that fits your need: https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing"
   type = string
   default = "g4dn.xlarge"
 }
