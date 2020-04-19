@@ -120,10 +120,33 @@ resource "aws_iam_policy" "password_get_parameter_policy" {
 }
 EOF
 }
+resource "aws_iam_policy" "driver_get_object_policy" {
+  name = "driver-get-object-policy"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
 
 resource "aws_iam_role_policy_attachment" "password_get_parameter_policy_attachment" {
   role = aws_iam_role.windows_instance_role.name
   policy_arn = aws_iam_policy.password_get_parameter_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "driver_get_object_policy_attachment" {
+  role = aws_iam_role.windows_instance_role.name
+  policy_arn = aws_iam_policy.driver_get_object_policy.arn
 }
 
 resource "aws_iam_instance_profile" "windows_instance_profile" {
@@ -159,10 +182,7 @@ output "instance_ip" {
   value = aws_spot_instance_request.windows_instance.public_ip
 }
 
-output "instance_user" {
-  value = "Administrator"
-}
-
 output "instance_password" {
   value = random_password.password.result
+  sensitive = true
 }
