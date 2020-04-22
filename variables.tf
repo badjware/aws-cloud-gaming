@@ -5,7 +5,7 @@ variable "region" {
 
 variable "allowed_availability_zone_identifier" {
   description = "The allowed availability zone identify (the letter suffixing the region). Choose ones that allows you to request the desired instance as spot instance in your region. An availability zone will be selected at random and the instance will be booted in it."
-  type = list
+  type = list(string)
   default = ["a", "b"]
 }
 
@@ -22,7 +22,7 @@ variable "root_block_device_size_gb" {
 }
 
 variable "custom_ami" {
-  description = "Use the specified ami instead of the most recent windows ami in available in the region"
+  description = "Use the specified AMI instead of the most recent windows AMI in available in the region"
   type = string
   default = ""
 }
