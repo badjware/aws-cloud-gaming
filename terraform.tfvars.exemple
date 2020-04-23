@@ -1,0 +1,5 @@
+region = ""
+#allowed_availability_zone_identifier = ["a", "b"]
+#instance_type = "g4dn.xlarge"
+#root_block_device_size_gb = 120
+custom_ami = ""
