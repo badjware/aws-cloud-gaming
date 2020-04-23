@@ -18,7 +18,7 @@ function install-parsec-cloud-preparation-tool {
 
     if (!(Test-Path -Path "C:\Parsec-Cloud-Preparation-Tool")) {
         [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-        (New-Object System.Net.WebClient).DownloadFile("https://github.com/jamesstringerparsec/Parsec-Cloud-Preparation-Tool/archive/master.zip","C:\Parsec-Cloud-Preparation-Tool.zip")
+        (New-Object System.Net.WebClient).DownloadFile("https://github.com/badjware/Parsec-Cloud-Preparation-Tool/archive/master.zip","C:\Parsec-Cloud-Preparation-Tool.zip")
         New-Item -Path "C:\Parsec-Cloud-Preparation-Tool" -ItemType Directory
         Expand-Archive "C:\Parsec-Cloud-Preparation-Tool.zip" -DestinationPath "C:\Parsec-Cloud-Preparation-Tool"
         Remove-Item -Path "C:\Parsec-Cloud-Preparation-Tool.zip"
@@ -42,7 +42,7 @@ function install-autologin {
     $password = (Get-SSMParameter -WithDecryption $true -Name '${password_ssm_parameter}').Value
     $regPath = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
     [microsoft.win32.registry]::SetValue($regPath, "AutoAdminLogon", "1")
-    [microsoft.win32.registry]::SetValue($regPath, "DefaultUsername", ".\Administrator")
+    [microsoft.win32.registry]::SetValue($regPath, "DefaultUserName", "Administrator")
     [microsoft.win32.registry]::SetValue($regPath, "DefaultPassword", $password)
 }
 
@@ -52,10 +52,7 @@ function install-graphic-driver {
     if (!(Test-Path -Path "C:\Program Files\NVIDIA Corporation\NVSMI")) {
         # download from s3 and extract
         $Bucket = "nvidia-gaming"
-        # FIXME: latest is bugged right now
-        # https://forums.aws.amazon.com/thread.jspa?messageID=939425#939425
-        #$KeyPrefix = "windows/latest"
-        $KeyPrefix = "windows/GRID-442.19"
+        $KeyPrefix = "windows/latest"
         $Objects = Get-S3Object -BucketName $Bucket -KeyPrefix $KeyPrefix -Region us-east-1
         $LocalDownloadFile = "C:\nvidia-driver\driver.zip"
         $ExtractionPath = "C:\nvidia-driver\driver"
