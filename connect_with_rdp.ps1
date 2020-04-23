@@ -6,6 +6,6 @@ $user = "Administrator"
 @"
 full address:s:$ip
 username:s:$user
-"@ | Out-File -FilePath "aws-cloud-gaming.rdp"
+"@ | Out-File -Encoding ASCII  -FilePath "aws-cloud-gaming.rdp"
 Invoke-Item "aws-cloud-gaming.rdp"
 

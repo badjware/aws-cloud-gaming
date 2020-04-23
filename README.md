@@ -31,6 +31,7 @@ tl;dr:
 
 # Set the desired region and create the infra 
 echo 'region = "us-east-1"' >terraform.tfvars
+terraform init
 terraform apply
 
 # Get the instance ip

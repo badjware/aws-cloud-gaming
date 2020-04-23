@@ -5,7 +5,7 @@ New-Item -ItemType Directory -Force -Path "$HOME/.aws" >$null
 if (Test-Path -Path "$HOME/.aws/credentials") {
     
     $input = Read-Host "AWS credentials already set! Replace it? [y/N] "
-    if (!($input -eq "y" || $input -eq "Y")) {
+    if (!($input -eq "y" -or $input -eq "Y")) {
         exit
     }
 }
@@ -22,6 +22,6 @@ while ($aws_secret_access_key -eq "") {
 [default]
 aws_access_key_id = $aws_access_key_id
 aws_secret_access_key = $aws_secret_access_key
-"@ | Out-File -FilePath "$HOME/.aws/credentials"
+"@ | Out-File -Encoding ASCII -FilePath "$HOME/.aws/credentials"
 
 Write-Output "AWS credentials configured"

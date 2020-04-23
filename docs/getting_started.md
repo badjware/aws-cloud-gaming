@@ -59,6 +59,7 @@ You are now ready to boot your gaming instance!
 
 1. Open a terminal/powershell in the folder where you unzipped the content of this repository and type in the following command:
 ``` bash
+terraform init
 terraform apply
 ```
 
