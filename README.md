@@ -90,4 +90,4 @@ resource "aws_volume_attachment" "game_volume_attachment" {
 | --- | --- | --- |
 | instance_id | The id of the instance | `string` |
 | instance_ip | The ip address of the instance. Use it to connect | `string` |
-| instance_id | The Admninistrator password of the instance. Use it to connect | `string` |
+| instance_password | The Administrator password of the instance. Use it to connect | `string` |
