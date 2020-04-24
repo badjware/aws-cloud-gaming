@@ -26,3 +26,51 @@ variable "custom_ami" {
   type = string
   default = ""
 }
+
+variable "install_parsec" {
+  description = "Download and run Parsec-Cloud-Preparation-Tool on first login"
+  type = bool
+  default = true
+}
+
+variable "install_auto_login" {
+  description = "Configure auto-login on first boot"
+  type = bool
+  default = true
+}
+
+variable "install_graphic_card_driver" {
+  description = "Download and install the Nvidia driver on first boot"
+  type = bool
+  default = true
+}
+
+variable "install_steam" {
+  description = "Download and install Valve Steam on first boot"
+  type = bool
+  default = true
+}
+
+variable "install_gog_galaxy" {
+  description = "Download and install GOG Galaxy on first boot"
+  type = bool
+  default = false
+}
+
+variable "install_uplay" {
+  description = "Download and install Ubisoft Uplay on first boot"
+  type = bool
+  default = false
+}
+
+variable "install_origin" {
+  description = "Download and install EA Origin on first boot"
+  type = bool
+  default = false
+}
+
+variable "install_epic_games_launcher" {
+  description = "Download and install EPIC Games Launcher on first boot"
+  type = bool
+  default = false
+}

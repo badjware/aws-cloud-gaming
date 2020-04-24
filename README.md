@@ -22,6 +22,8 @@ Currently only compatible with AWS g4 instance family.
 * Install the latest Nvidia vGaming driver.
 * Install [Steam](https://store.steampowered.com/).
 
+Optionally, other launcher than Steam such as GOG Galaxy, Uplay, etc. can be downloaded and installed automatically.
+
 ## Getting started
 See the [in-depth guide](./docs/getting_started.md).
 
@@ -84,6 +86,15 @@ resource "aws_volume_attachment" "game_volume_attachment" {
 | instance_type | The aws instance type, Choose one with a CPU/GPU that fits your need: https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing | `string` | "g4dn.xlarge" |
 | root_block_device_size_gb | The size of the root block device (C:\\ drive) attached to the instance | `number` | 120 |
 | custom_ami | Use the specified ami instead of the most recent windows ami in available in the region | `string` | "" |
+| install_parsec | Download and run Parsec-Cloud-Preparation-Tool on first login | `bool` | true |
+| install_auto_login | Configure auto-login on first boot | `bool` | true |
+| install_graphic_card_driver | Download and install the Nvidia driver on first boot | `bool` | true |
+| install_steam | Download and install Valve Steam on first boot | `bool` | true |
+| install_gog_galaxy | Download and install GOG Galaxy on first boot | `bool` | false |
+| install_uplay | Download and install Ubisoft Uplay on first boot | `bool` | false |
+| install_origin | Download and install EA Origin on first boot | `bool` | false |
+| install_epic_games_launcher | Download and install EPIC Games Launcher on first boot | `bool` | false |
+
 
 ## Outputs
 | Name | Description | Type |

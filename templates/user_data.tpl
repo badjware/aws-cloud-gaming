@@ -13,6 +13,27 @@ function install-steam {
     choco install steam
 }
 
+function install-gog-galaxy {
+    choco install goggalaxy
+}
+
+function install-uplay {
+    choco install uplay
+}
+
+function install-origin {
+    choco install origin
+}
+
+function install-epic-games-launcher {
+    choco install epicgameslauncher
+}
+
+function install-battle-net {
+    # package is abandonned :-(
+    choco install battle.net
+}
+
 function install-parsec-cloud-preparation-tool {
     # https://github.com/jamesstringerparsec/Parsec-Cloud-Preparation-Tool
 
@@ -85,9 +106,39 @@ function install-graphic-driver {
 
 install-chocolatey
 install-awstools
+
+%{ if var.install_parsec }
 install-parsec-cloud-preparation-tool
+%{ endif }
+
 install-admin-password
+
+%{ if var.install_auto_login }
 install-autologin
-install-steam
+%{ endif }
+
+%{ if var.install_graphic_card_driver }
 install-graphic-driver
+%{ endif }
+
+%{ if var.install_steam }
+install-steam
+%{ endif }
+
+%{ if var.install_gog_galaxy }
+install-gog-galaxy
+%{ endif }
+
+%{ if var.install_uplay }
+install-uplay
+%{ endif }
+
+%{ if var.install_origin }
+install-origin
+%{ endif }
+
+%{ if var.install_epic_games_launcher }
+install-epic-games-launcher
+%{ endif }
+
 </powershell>
