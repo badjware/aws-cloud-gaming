@@ -42,7 +42,7 @@ Login to your AWS console and follow the [documentation](https://docs.aws.amazon
 
 Once you have your access key id and your secret access key, run the script `configure_aws_credentials.ps1` and provide them when prompted.
 
-Alternatively, create the file `%HOME\.aws\credentials` on Windows, or `~/.aws/credentials` on Linux and place the following content:
+Alternatively, create the file `%UserProfile%\.aws\credentials` on Windows, or `~/.aws/credentials` on Linux and place the following content:
 ``` ini
 [default]
 aws_access_key_id = <your_access_key_id>
