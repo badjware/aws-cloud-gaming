@@ -63,11 +63,14 @@ function install-admin-password {
 }
 
 function install-autologin {
+    Install-Module -Name DSCR_AutoLogon -Force
+    Import-Module -Name DSCR_AutoLogon
     $password = (Get-SSMParameter -WithDecryption $true -Name '${password_ssm_parameter}').Value
     $regPath = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
     [microsoft.win32.registry]::SetValue($regPath, "AutoAdminLogon", "1")
     [microsoft.win32.registry]::SetValue($regPath, "DefaultUserName", "Administrator")
-    [microsoft.win32.registry]::SetValue($regPath, "DefaultPassword", $password)
+    Remove-ItemProperty -Path $regPath -Name "DefaultPassword" -ErrorAction SilentlyContinue
+    (New-Object PInvoke.LSAUtil.LSAutil -ArgumentList "DefaultPassword").SetSecret($password)
 }
 
 function install-graphic-driver {
