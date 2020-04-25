@@ -1,10 +1,10 @@
 # aws-cloud-gaming
 
-Provision an AWS EC2 instance with a graphic card to play games in the cloud. Uses terraform to create the required infrastructure and a user data script to install the applications on the instance. Once configured, games can be streamed from the instance with low-latency using [Parsec](https://parsecgaming.com/).
+Provision an AWS EC2 instance with a gpu to play games in the cloud. Uses terraform to create the required infrastructure and a user data script to install the applications on the instance. Once configured, games can be streamed from the instance with low-latency using [Parsec](https://parsecgaming.com/).
 
 The scripts in this repository automate most of the manual operations needed to setup such an instance. The only exception is management of AMIs, which must be done through the AWS management console.
 
-Currently only compatible with AWS g4 instance family.
+Currently only compatible with g3 and g4 instance family. The script will still run on other instance types, but gpu driver will have to be installed manually.
 
 **These scripts create resources in AWS and your credit card WILL be charged for them. Be sure to review changes before applying them. These scripts come with no warranty of any kind, use them at your own risk.**
 
