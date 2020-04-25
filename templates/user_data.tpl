@@ -12,31 +12,6 @@ function install-chocolatey {
     choco feature enable -n allowGlobalConfirmation
 }
 
-function install-steam {
-    choco install steam
-}
-
-function install-gog-galaxy {
-    choco install goggalaxy
-}
-
-function install-uplay {
-    choco install uplay
-}
-
-function install-origin {
-    choco install origin
-}
-
-function install-epic-games-launcher {
-    choco install epicgameslauncher
-}
-
-function install-battle-net {
-    # package is abandonned :-(
-    choco install battle.net
-}
-
 function install-parsec-cloud-preparation-tool {
     # https://github.com/jamesstringerparsec/Parsec-Cloud-Preparation-Tool
 
@@ -161,23 +136,23 @@ install-graphic-driver
 %{ endif }
 
 %{ if var.install_steam }
-install-steam
+choco install steam
 %{ endif }
 
 %{ if var.install_gog_galaxy }
-install-gog-galaxy
+choco install goggalaxy
 %{ endif }
 
 %{ if var.install_uplay }
-install-uplay
+choco install uplay
 %{ endif }
 
 %{ if var.install_origin }
-install-origin
+choco install origin
 %{ endif }
 
 %{ if var.install_epic_games_launcher }
-install-epic-games-launcher
+choco install epicgameslauncher
 %{ endif }
 
 </powershell>
