@@ -91,7 +91,7 @@ function install-graphic-driver {
         }
 
         # install licence
-        Copy-S3Object -BucketName $Bucket -Key "GridSwCert-Windows.cert" -LocalFile "C:\Users\Public\Documents\GridSwCert.txt" -Region us-east-1
+        Copy-S3Object -BucketName $Bucket -Key "GridSwCert-Archive/GridSwCert-Windows_2020_04.cert" -LocalFile "C:\Users\Public\Documents\GridSwCert.txt" -Region us-east-1
         [microsoft.win32.registry]::SetValue("HKEY_LOCAL_MACHINE\SOFTWARE\NVIDIA Corporation\Global", "vGamingMarketplace", 0x02)
 
         %{ endif }
