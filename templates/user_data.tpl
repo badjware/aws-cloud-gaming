@@ -19,11 +19,11 @@ function install-parsec-cloud-preparation-tool {
     $extractPath = "C:\Parsec-Cloud-Preparation-Tool"
     $repoPath = Join-Path $extractPath "Parsec-Cloud-Preparation-Tool-master"
     $copyPath = Join-Path $desktopPath "ParsecTemp"
-    $scriptEntrypoint = Join-Path $copyPath "PostInstall\PostInstall.ps1"
+    $scriptEntrypoint = Join-Path $repoPath "PostInstall\PostInstall.ps1"
 
     if (!(Test-Path -Path $extractPath)) {
         [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-        (New-Object System.Net.WebClient).DownloadFile("https://github.com/badjware/Parsec-Cloud-Preparation-Tool/archive/master.zip", $downloadPath)
+        (New-Object System.Net.WebClient).DownloadFile("https://github.com/jamesstringerparsec/Parsec-Cloud-Preparation-Tool/archive/master.zip", $downloadPath)
         New-Item -Path $extractPath -ItemType Directory
         Expand-Archive $downloadPath -DestinationPath $extractPath
         Remove-Item $downloadPath
@@ -32,7 +32,7 @@ function install-parsec-cloud-preparation-tool {
         Copy-Item $repoPath/* $copyPath -Recurse -Container
 
         # Setup scheduled task to run Parsec-Cloud-Preparation-Tool once at logon
-        $action = New-ScheduledTaskAction -Execute powershell.exe -WorkingDirectory $copyPath -Argument "-Command `"$scriptEntrypoint -PromptPasswordUpdateGPU:`$false`""
+        $action = New-ScheduledTaskAction -Execute powershell.exe -WorkingDirectory $repoPath -Argument "-Command `"$scriptEntrypoint -DontPromptPasswordUpdateGPU`""
         run-once-on-login "Parsec-Cloud-Preparation-Tool" $action
     }
 }
