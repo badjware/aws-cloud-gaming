@@ -14,16 +14,25 @@ function install-chocolatey {
 
 function install-parsec-cloud-preparation-tool {
     # https://github.com/jamesstringerparsec/Parsec-Cloud-Preparation-Tool
+    $desktopPath = [Environment]::GetFolderPath("Desktop")
+    $downloadPath = "C:\Parsec-Cloud-Preparation-Tool.zip"
+    $extractPath = "C:\Parsec-Cloud-Preparation-Tool"
+    $repoPath = Join-Path $extractPath "Parsec-Cloud-Preparation-Tool-master"
+    $copyPath = Join-Path $desktopPath "ParsecTemp"
+    $scriptEntrypoint = Join-Path $copyPath "PostInstall\PostInstall.ps1"
 
-    if (!(Test-Path -Path "C:\Parsec-Cloud-Preparation-Tool")) {
+    if (!(Test-Path -Path $extractPath)) {
         [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-        (New-Object System.Net.WebClient).DownloadFile("https://github.com/badjware/Parsec-Cloud-Preparation-Tool/archive/master.zip","C:\Parsec-Cloud-Preparation-Tool.zip")
-        New-Item -Path "C:\Parsec-Cloud-Preparation-Tool" -ItemType Directory
-        Expand-Archive "C:\Parsec-Cloud-Preparation-Tool.zip" -DestinationPath "C:\Parsec-Cloud-Preparation-Tool"
-        Remove-Item -Path "C:\Parsec-Cloud-Preparation-Tool.zip"
-    
+        (New-Object System.Net.WebClient).DownloadFile("https://github.com/badjware/Parsec-Cloud-Preparation-Tool/archive/master.zip", $downloadPath)
+        New-Item -Path $extractPath -ItemType Directory
+        Expand-Archive $downloadPath -DestinationPath $extractPath
+        Remove-Item $downloadPath
+
+        New-Item -Path $copyPath -ItemType Directory
+        Copy-Item $repoPath/* $copyPath -Recurse -Container
+
         # Setup scheduled task to run Parsec-Cloud-Preparation-Tool once at logon
-        $action = New-ScheduledTaskAction -Execute powershell.exe -WorkingDirectory "C:\Parsec-Cloud-Preparation-Tool\Parsec-Cloud-Preparation-Tool-master" -Argument "C:\Parsec-Cloud-Preparation-Tool\Parsec-Cloud-Preparation-Tool-master\Loader.ps1"
+        $action = New-ScheduledTaskAction -Execute powershell.exe -WorkingDirectory $copyPath -Argument "-Command `"$scriptEntrypoint -PromptPasswordUpdateGPU:`$false`""
         run-once-on-login "Parsec-Cloud-Preparation-Tool" $action
     }
 }
