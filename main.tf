@@ -14,7 +14,7 @@ data "aws_ami" "windows_ami" {
 
 data "external" "local_ip" {
   # curl should (hopefully) be available everywhere
-  program = ["curl", "https://v4.ident.me/.json"]
+  program = ["curl", "https://api.ipify.org?format=json"]
 }
 
 locals {
@@ -56,7 +56,7 @@ resource "aws_security_group_rule" "rdp_ingress" {
   from_port = 3389
   to_port = 3389
   protocol = "tcp"
-  cidr_blocks = ["${data.external.local_ip.result.address}/32"]
+  cidr_blocks = ["${data.external.local_ip.result.ip}/32"]
   security_group_id = aws_security_group.default.id
 }
 
@@ -67,7 +67,7 @@ resource "aws_security_group_rule" "vnc_ingress" {
   from_port = 5900
   to_port = 5900
   protocol = "tcp"
-  cidr_blocks = ["${data.external.local_ip.result.address}/32"]
+  cidr_blocks = ["${data.external.local_ip.result.ip}/32"]
   security_group_id = aws_security_group.default.id
 }
 
