@@ -32,7 +32,7 @@ resource "random_password" "password" {
 }
 
 resource "aws_ssm_parameter" "password" {
-  name = "cloud-gaming-administrator-password"
+  name = "cloud-gaming-${terraform.workspace}-administrator-password"
   type = "SecureString"
   value = random_password.password.result
 
@@ -42,7 +42,7 @@ resource "aws_ssm_parameter" "password" {
 }
 
 resource "aws_security_group" "default" {
-  name = "cloud-gaming-sg"
+  name = "cloud-gaming-${terraform.workspace}-sg"
 
   tags = {
     App = "aws-cloud-gaming"
@@ -83,7 +83,7 @@ resource "aws_security_group_rule" "default" {
 }
 
 resource "aws_iam_role" "windows_instance_role" {
-  name = "cloud-gaming-instance-role"
+  name = "cloud-gaming-${terraform.workspace}-instance-role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -106,7 +106,7 @@ EOF
 }
 
 resource "aws_iam_policy" "password_get_parameter_policy" {
-  name = "password-get-parameter-policy"
+  name = "cloud-gaming-${terraform.workspace}-password-get-parameter-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -120,23 +120,9 @@ resource "aws_iam_policy" "password_get_parameter_policy" {
 }
 EOF
 }
-resource "aws_iam_policy" "driver_get_object_policy" {
-  name = "driver-get-object-policy"
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetObject"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+
+data "aws_iam_policy" "driver_get_object_policy" {
+  arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "password_get_parameter_policy_attachment" {
@@ -146,11 +132,11 @@ resource "aws_iam_role_policy_attachment" "password_get_parameter_policy_attachm
 
 resource "aws_iam_role_policy_attachment" "driver_get_object_policy_attachment" {
   role = aws_iam_role.windows_instance_role.name
-  policy_arn = aws_iam_policy.driver_get_object_policy.arn
+  policy_arn = data.aws_iam_policy.driver_get_object_policy.arn
 }
 
 resource "aws_iam_instance_profile" "windows_instance_profile" {
-  name = "cloud-gaming-instance-profile"
+  name = "cloud-gaming-${terraform.workspace}-instance-profile"
   role = aws_iam_role.windows_instance_role.name
 }
 
@@ -159,7 +145,7 @@ resource "aws_spot_instance_request" "windows_instance" {
   availability_zone = local.availability_zone
   ami = (length(var.custom_ami) > 0) ? var.custom_ami : data.aws_ami.windows_ami.image_id
   security_groups = [aws_security_group.default.name]
-  user_data = templatefile("${path.module}/templates/user_data.tpl", {
+  user_data = var.skip_install ? "" : templatefile("${path.module}/templates/user_data.tpl", {
     password_ssm_parameter=aws_ssm_parameter.password.name,
     var={
       instance_type=var.instance_type,
@@ -172,7 +158,7 @@ resource "aws_spot_instance_request" "windows_instance" {
       install_epic_games_launcher=var.install_epic_games_launcher,
       install_uplay=var.install_uplay,
     }
-    })
+  })
   iam_instance_profile = aws_iam_instance_profile.windows_instance_profile.id
 
   # Spot configuration
@@ -186,17 +172,17 @@ resource "aws_spot_instance_request" "windows_instance" {
   }
 
   tags = {
-    Name = "cloud-gaming-instance"
+    Name = "cloud-gaming-${terraform.workspace}-instance"
     App = "aws-cloud-gaming"
   }
 }
 
 output "instance_id" {
-  value = aws_spot_instance_request.windows_instance.id
+  value = aws_spot_instance_request.windows_instance.spot_instance_id
 }
 
-output "instance_ip" {
-  value = aws_spot_instance_request.windows_instance.public_ip
+output "instance_public_dns" {
+  value = aws_spot_instance_request.windows_instance.public_dns
 }
 
 output "instance_password" {
