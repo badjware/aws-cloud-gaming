@@ -192,7 +192,7 @@ resource "aws_spot_instance_request" "windows_instance" {
 }
 
 output "instance_id" {
-  value = aws_spot_instance_request.windows_instance.id
+  value = aws_spot_instance_request.windows_instance.spot_instance_id
 }
 
 output "instance_ip" {
