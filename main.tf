@@ -32,7 +32,7 @@ resource "random_password" "password" {
 }
 
 resource "aws_ssm_parameter" "password" {
-  name = "cloud-gaming-administrator-password"
+  name = "${var.resource_name}-administrator-password"
   type = "SecureString"
   value = random_password.password.result
 
@@ -42,7 +42,7 @@ resource "aws_ssm_parameter" "password" {
 }
 
 resource "aws_security_group" "default" {
-  name = "cloud-gaming-sg"
+  name = "${var.resource_name}-sg"
 
   tags = {
     App = "aws-cloud-gaming"
@@ -83,7 +83,7 @@ resource "aws_security_group_rule" "default" {
 }
 
 resource "aws_iam_role" "windows_instance_role" {
-  name = "cloud-gaming-instance-role"
+  name = "${var.resource_name}-instance-role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -106,7 +106,7 @@ EOF
 }
 
 resource "aws_iam_policy" "password_get_parameter_policy" {
-  name = "password-get-parameter-policy"
+  name = "${var.resource_name}-password-get-parameter-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -136,7 +136,7 @@ resource "aws_iam_role_policy_attachment" "driver_get_object_policy_attachment" 
 }
 
 resource "aws_iam_instance_profile" "windows_instance_profile" {
-  name = "cloud-gaming-instance-profile"
+  name = "${var.resource_name}-instance-profile"
   role = aws_iam_role.windows_instance_role.name
 }
 
@@ -172,7 +172,7 @@ resource "aws_spot_instance_request" "windows_instance" {
   }
 
   tags = {
-    Name = "cloud-gaming-instance"
+    Name = "${var.resource_name}-instance"
     App = "aws-cloud-gaming"
   }
 }
