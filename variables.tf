@@ -4,7 +4,7 @@ variable "region" {
 }
 
 variable "resource_name" {
-  description = "Name to prefix to all resources in AWS"
+  description = "Name with which to prefix resources in AWS"
   type = string
   default = "cloud-gaming"
 }
@@ -35,7 +35,7 @@ variable "custom_ami" {
 
 
 variable "skip_install" {
-  description = "When starting from an AMI that is already setup there is no need to install everything again on startup"
+  description = "Skip installation step on startup. Useful when using a custom AMI that is already setup"
   type = bool
   default = false
 }
