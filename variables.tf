@@ -27,6 +27,13 @@ variable "custom_ami" {
   default = ""
 }
 
+
+variable "skip_install" {
+  description = "When starting from an AMI that is already setup there is no need to install everything again on startup"
+  type = bool
+  default = false
+}
+
 variable "install_parsec" {
   description = "Download and run Parsec-Cloud-Preparation-Tool on first login"
   type = bool
