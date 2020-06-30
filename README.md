@@ -84,8 +84,10 @@ resource "aws_volume_attachment" "game_volume_attachment" {
 | region | The aws region. Choose the one closest to you: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions | `string` | |
 | allowed_availability_zone_identifier | The allowed availability zone identify (the letter suffixing the region). Choose ones that allows you to request the desired instance as spot instance in your region. An availability zone will be selected at random and the instance will be booted in it. | `list(string)` | ["a", "b"] |
 | instance_type | The aws instance type, Choose one with a CPU/GPU that fits your need: https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing | `string` | "g4dn.xlarge" |
+| resource_name | Name with which to prefix resources in AWS | `string` | `cloud-gaming` |
 | root_block_device_size_gb | The size of the root block device (C:\\ drive) attached to the instance | `number` | 120 |
 | custom_ami | Use the specified ami instead of the most recent windows ami in available in the region | `string` | "" |
+| skip_install | Skip installation step on startup. Useful when using a custom AMI that is already setup | `bool` | false |
 | install_parsec | Download and run Parsec-Cloud-Preparation-Tool on first login | `bool` | true |
 | install_auto_login | Configure auto-login on first boot | `bool` | true |
 | install_graphic_card_driver | Download and install the Nvidia driver on first boot | `bool` | true |
@@ -101,4 +103,5 @@ resource "aws_volume_attachment" "game_volume_attachment" {
 | --- | --- | --- |
 | instance_id | The id of the instance | `string` |
 | instance_ip | The ip address of the instance. Use it to connect | `string` |
+| instance_public_dns | The dns address of the instance. Use it to connect | `string` |
 | instance_password | The Administrator password of the instance. Use it to connect | `string` |

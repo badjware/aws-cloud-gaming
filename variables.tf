@@ -3,6 +3,12 @@ variable "region" {
   type = string
 }
 
+variable "resource_name" {
+  description = "Name with which to prefix resources in AWS"
+  type = string
+  default = "cloud-gaming"
+}
+
 variable "allowed_availability_zone_identifier" {
   description = "The allowed availability zone identify (the letter suffixing the region). Choose ones that allows you to request the desired instance as spot instance in your region. An availability zone will be selected at random and the instance will be booted in it."
   type = list(string)
@@ -25,6 +31,13 @@ variable "custom_ami" {
   description = "Use the specified AMI instead of the most recent windows AMI in available in the region"
   type = string
   default = ""
+}
+
+
+variable "skip_install" {
+  description = "Skip installation step on startup. Useful when using a custom AMI that is already setup"
+  type = bool
+  default = false
 }
 
 variable "install_parsec" {
