@@ -153,10 +153,15 @@ resource "aws_spot_instance_request" "windows_instance" {
       install_auto_login=var.install_auto_login,
       install_graphic_card_driver=var.install_graphic_card_driver,
       install_steam=var.install_steam,
+      install_steam_cmd=var.install_steam_cmd,
       install_gog_galaxy=var.install_gog_galaxy,
       install_origin=var.install_origin,
       install_epic_games_launcher=var.install_epic_games_launcher,
       install_uplay=var.install_uplay,
+      steam_account_email=var.steam_account_email,
+      steam_account_password=var.steam_account_password,
+      steam_app_id=var.steam_app_id,
+      server_address=var.server_address,
     }
   })
   iam_instance_profile = aws_iam_instance_profile.windows_instance_profile.id
