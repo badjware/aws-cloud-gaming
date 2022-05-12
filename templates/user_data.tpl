@@ -12,6 +12,18 @@ function install-chocolatey {
     choco feature enable -n allowGlobalConfirmation
 }
 
+function generate-game-start-script {
+  Set-Content -Path C:\start_game.txt -Value '@ShutdownOnFailedCommand 1','@NoPromptForPassword 1','force_install_dir C:\gamedir','login ${var.steam_account_email} ${var.steam_account_password}','app_update ${var.steam_app_id} validate','quit'
+}
+
+function install-game {
+  steamcmd +runscript C:\start_game.txt
+}
+
+function start-game {
+  Start-Process "${var.server_address}"
+}
+
 function install-parsec-cloud-preparation-tool {
     # https://github.com/jamesstringerparsec/Parsec-Cloud-Preparation-Tool
     $desktopPath = [Environment]::GetFolderPath("Desktop")
@@ -148,6 +160,10 @@ install-graphic-driver
 choco install steam
 %{ endif }
 
+%{ if var.install_steam_cmd }
+choco install steamcmd
+%{ endif }
+
 %{ if var.install_gog_galaxy }
 choco install goggalaxy
 %{ endif }
@@ -164,4 +180,7 @@ choco install origin
 choco install epicgameslauncher
 %{ endif }
 
+generate-game-start-script
+install-game
+start-game
 </powershell>

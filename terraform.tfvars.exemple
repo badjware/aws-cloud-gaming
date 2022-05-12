@@ -3,6 +3,10 @@ region = ""
 #instance_type = "g4dn.xlarge"
 #root_block_device_size_gb = 120
 custom_ami = ""
+steam_account_email = "someemail@domain.com"
+steam_account_password = "somepassword"
+steam_app_id = "686810"
+server_address = "steam://connect/192.169.89.50:26662"
 
 #install_parsec=true
 #install_auto_login=true

@@ -64,6 +64,36 @@ variable "install_steam" {
   default = true
 }
 
+variable "install_steam_cmd" {
+  description = "Download and install Valve Steam CMD on first boot"
+  type = bool
+  default = true
+}
+variable "steam_account_email" {
+  description = "steam_account_email"
+  type = string
+  default = "na"
+}
+
+variable "steam_account_password" {
+  description = "steam_account_password"
+  type = string
+  default = "na"
+}
+
+variable "steam_app_id" {
+  description = "steam_app_id"
+  type = string
+  default = "na"
+}
+
+variable "server_address" {
+  description = "server_address"
+  type = string
+  default = "na"
+}
+
+
 variable "install_gog_galaxy" {
   description = "Download and install GOG Galaxy on first boot"
   type = bool
