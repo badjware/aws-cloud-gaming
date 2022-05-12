@@ -13,8 +13,7 @@ function install-chocolatey {
 }
 
 function generate-game-start-script {
-  New-Item "C:\start_game.txt"
-  Set-Content "C:\start_game.txt '@ShutdownOnFailedCommand 1','@NoPromptForPassword 1','login ${var.steam_account_email} ${var.steam_account_password}','app_update ${var.steam_app_id} validate','quit'"
+  Set-Content -Path C:\start_game.txt -Value '@ShutdownOnFailedCommand 1','@NoPromptForPassword 1','force_install_dir C:\gamedir','login ${var.steam_account_email} ${var.steam_account_password}','app_update ${var.steam_app_id} validate','quit'
 }
 
 function install-game {
