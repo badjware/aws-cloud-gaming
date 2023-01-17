@@ -16,14 +16,20 @@ data "http" "local_ip" {
   url = "https://api.ipify.org?format=json"
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 locals {
-  availability_zone = "${var.region}${element(var.allowed_availability_zone_identifier, random_integer.az_id.result)}"
   local_ip = jsondecode(data.http.local_ip.response_body).ip
+  availability_zones = length(var.allowed_availability_zone_identifier) != 0 ? var.allowed_availability_zone_identifier : [for az in data.aws_availability_zones.available.names : substr(az, -1, 1)]
+  availability_zone_identifier = element(local.availability_zones, random_integer.az_id.result)
+  availability_zone = "${var.region}${local.availability_zone_identifier}"
 }
 
 resource  "random_integer" "az_id" {
   min = 0
-  max = length(var.allowed_availability_zone_identifier)
+  max = length(local.availability_zones)
 }
 
 resource "random_password" "password" {
