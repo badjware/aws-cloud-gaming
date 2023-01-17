@@ -12,9 +12,8 @@ data "aws_ami" "windows_ami" {
   }
 }
 
-data "external" "local_ip" {
-  # curl should (hopefully) be available everywhere
-  program = ["curl", "https://api.ipify.org?format=json"]
+data "http" "local_ip" {
+  url = "https://api.ipify.org?format=json"
 }
 
 data "aws_availability_zones" "available" {
@@ -22,6 +21,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
+  local_ip = jsondecode(data.http.local_ip.response_body).ip
   availability_zones = length(var.allowed_availability_zone_identifier) != 0 ? var.allowed_availability_zone_identifier : [for az in data.aws_availability_zones.available.names : substr(az, -1, 1)]
   availability_zone_identifier = element(local.availability_zones, random_integer.az_id.result)
   availability_zone = "${var.region}${local.availability_zone_identifier}"
@@ -62,7 +62,7 @@ resource "aws_security_group_rule" "rdp_ingress" {
   from_port = 3389
   to_port = 3389
   protocol = "tcp"
-  cidr_blocks = ["${data.external.local_ip.result.ip}/32"]
+  cidr_blocks = ["${local.local_ip}/32"]
   security_group_id = aws_security_group.default.id
 }
 
@@ -73,7 +73,7 @@ resource "aws_security_group_rule" "vnc_ingress" {
   from_port = 5900
   to_port = 5900
   protocol = "tcp"
-  cidr_blocks = ["${data.external.local_ip.result.ip}/32"]
+  cidr_blocks = ["${local.local_ip}/32"]
   security_group_id = aws_security_group.default.id
 }
 
