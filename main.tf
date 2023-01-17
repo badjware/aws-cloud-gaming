@@ -4,10 +4,10 @@ provider "aws" {
 
 data "aws_ami" "windows_ami" {
   most_recent = true
-  owners = ["amazon"]
+  owners      = ["amazon"]
 
   filter {
-    name = "name"
+    name   = "name"
     values = ["Windows_Server-2019-English-Full-Base-*"]
   }
 }
@@ -21,19 +21,19 @@ locals {
   availability_zone = "${var.region}${element(var.allowed_availability_zone_identifier, random_integer.az_id.result)}"
 }
 
-resource  "random_integer" "az_id" {
+resource "random_integer" "az_id" {
   min = 0
   max = length(var.allowed_availability_zone_identifier)
 }
 
 resource "random_password" "password" {
-  length = 32
+  length  = 32
   special = true
 }
 
 resource "aws_ssm_parameter" "password" {
-  name = "${var.resource_name}-administrator-password"
-  type = "SecureString"
+  name  = "${var.resource_name}-administrator-password"
+  type  = "SecureString"
   value = random_password.password.result
 
   tags = {
@@ -51,39 +51,39 @@ resource "aws_security_group" "default" {
 
 # Allow rdp connections from the local ip
 resource "aws_security_group_rule" "rdp_ingress" {
-  type = "ingress"
-  description = "Allow rdp connections (port 3389)"
-  from_port = 3389
-  to_port = 3389
-  protocol = "tcp"
-  cidr_blocks = ["${data.external.local_ip.result.ip}/32"]
+  type              = "ingress"
+  description       = "Allow rdp connections (port 3389)"
+  from_port         = 3389
+  to_port           = 3389
+  protocol          = "tcp"
+  cidr_blocks       = ["${data.external.local_ip.result.ip}/32"]
   security_group_id = aws_security_group.default.id
 }
 
 # Allow vnc connections from the local ip
 resource "aws_security_group_rule" "vnc_ingress" {
-  type = "ingress"
-  description = "Allow vnc connections (port 5900)"
-  from_port = 5900
-  to_port = 5900
-  protocol = "tcp"
-  cidr_blocks = ["${data.external.local_ip.result.ip}/32"]
+  type              = "ingress"
+  description       = "Allow vnc connections (port 5900)"
+  from_port         = 5900
+  to_port           = 5900
+  protocol          = "tcp"
+  cidr_blocks       = ["${data.external.local_ip.result.ip}/32"]
   security_group_id = aws_security_group.default.id
 }
 
 
 # Allow outbound connection to everywhere
 resource "aws_security_group_rule" "default" {
-  type = "egress"
-  from_port = 0
-  to_port = 0
-  protocol = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.default.id
 }
 
 resource "aws_iam_role" "windows_instance_role" {
-  name = "${var.resource_name}-instance-role"
+  name               = "${var.resource_name}-instance-role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -106,7 +106,7 @@ EOF
 }
 
 resource "aws_iam_policy" "password_get_parameter_policy" {
-  name = "${var.resource_name}-password-get-parameter-policy"
+  name   = "${var.resource_name}-password-get-parameter-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -126,12 +126,12 @@ data "aws_iam_policy" "driver_get_object_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "password_get_parameter_policy_attachment" {
-  role = aws_iam_role.windows_instance_role.name
+  role       = aws_iam_role.windows_instance_role.name
   policy_arn = aws_iam_policy.password_get_parameter_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "driver_get_object_policy_attachment" {
-  role = aws_iam_role.windows_instance_role.name
+  role       = aws_iam_role.windows_instance_role.name
   policy_arn = data.aws_iam_policy.driver_get_object_policy.arn
 }
 
@@ -141,28 +141,28 @@ resource "aws_iam_instance_profile" "windows_instance_profile" {
 }
 
 resource "aws_spot_instance_request" "windows_instance" {
-  instance_type = var.instance_type
+  instance_type     = var.instance_type
   availability_zone = local.availability_zone
-  ami = (length(var.custom_ami) > 0) ? var.custom_ami : data.aws_ami.windows_ami.image_id
-  security_groups = [aws_security_group.default.name]
+  ami               = (length(var.custom_ami) > 0) ? var.custom_ami : data.aws_ami.windows_ami.image_id
+  security_groups   = [aws_security_group.default.name]
   user_data = var.skip_install ? "" : templatefile("${path.module}/templates/user_data.tpl", {
-    password_ssm_parameter=aws_ssm_parameter.password.name,
-    var={
-      instance_type=var.instance_type,
-      install_parsec=var.install_parsec,
-      install_auto_login=var.install_auto_login,
-      install_graphic_card_driver=var.install_graphic_card_driver,
-      install_steam=var.install_steam,
-      install_gog_galaxy=var.install_gog_galaxy,
-      install_origin=var.install_origin,
-      install_epic_games_launcher=var.install_epic_games_launcher,
-      install_uplay=var.install_uplay,
+    password_ssm_parameter = aws_ssm_parameter.password.name,
+    var = {
+      instance_type               = var.instance_type,
+      install_parsec              = var.install_parsec,
+      install_auto_login          = var.install_auto_login,
+      install_graphic_card_driver = var.install_graphic_card_driver,
+      install_steam               = var.install_steam,
+      install_gog_galaxy          = var.install_gog_galaxy,
+      install_origin              = var.install_origin,
+      install_epic_games_launcher = var.install_epic_games_launcher,
+      install_uplay               = var.install_uplay,
     }
   })
   iam_instance_profile = aws_iam_instance_profile.windows_instance_profile.id
 
   # Spot configuration
-  spot_type = "one-time"
+  spot_type            = "one-time"
   wait_for_fulfillment = true
 
   # EBS configuration
@@ -173,7 +173,7 @@ resource "aws_spot_instance_request" "windows_instance" {
 
   tags = {
     Name = "${var.resource_name}-instance"
-    App = "aws-cloud-gaming"
+    App  = "aws-cloud-gaming"
   }
 }
 
@@ -190,6 +190,6 @@ output "instance_public_dns" {
 }
 
 output "instance_password" {
-  value = random_password.password.result
+  value     = random_password.password.result
   sensitive = true
 }
