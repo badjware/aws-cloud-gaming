@@ -82,7 +82,7 @@ resource "aws_volume_attachment" "game_volume_attachment" {
 | Name | Description | Type | Default |
 | --- | --- | --- | ---|
 | region | The aws region. Choose the one closest to you: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions | `string` | |
-| allowed_availability_zone_identifier | The allowed availability zone identify (the letter suffixing the region). Choose ones that allows you to request the desired instance as spot instance in your region. An availability zone will be selected at random and the instance will be booted in it. | `list(string)` | ["a", "b"] |
+| allowed_availability_zone_identifier | The allowed availability zone identify (the letter suffixing the region). Choose ones that allows you to request the desired instance as spot instance in your region. An availability zone will be selected at random and the instance will be booted in it. | `list(string)` | `[]` (all available) |
 | instance_type | The aws instance type, Choose one with a CPU/GPU that fits your need: https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing | `string` | "g4dn.xlarge" |
 | resource_name | Name with which to prefix resources in AWS | `string` | `cloud-gaming` |
 | root_block_device_size_gb | The size of the root block device (C:\\ drive) attached to the instance | `number` | 120 |
